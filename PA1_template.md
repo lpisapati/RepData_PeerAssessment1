@@ -1,13 +1,9 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 
 ## Loading and preprocessing the data
-```{r simulation, echo = TRUE}
+
+```r
 downloadedZipFile = "activity.zip"
 downloadedFile = "activity.csv"
 downloadFolder = "tmp" 
@@ -25,9 +21,20 @@ activityDataTrimed = transform(activityDataTrimed, date = as.Date(date, "%Y-%m-%
 head(activityDataTrimed)
 ```
 
+```
+##     steps       date interval
+## 289     0 2012-10-02        0
+## 290     0 2012-10-02        5
+## 291     0 2012-10-02       10
+## 292     0 2012-10-02       15
+## 293     0 2012-10-02       20
+## 294     0 2012-10-02       25
+```
+
 
 ## What is mean total number of steps taken per day?
-```{r echo = TRUE}
+
+```r
 #Calculate the total number of steps taken per day
 totalSteps = aggregate(activityDataTrimed$steps ~ activityDataTrimed$date, FUN = sum)
 colnames(totalSteps) = c("Date","Steps")
@@ -38,28 +45,63 @@ hist(totalSteps$Steps, col="red",
       ylab = "Date (per day)",
       main = "Steps taken per day"
        )
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-1-1.png) 
+
+```r
 #Calculate and report the mean and median of the total number of steps taken per day
 mean(totalSteps$Steps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(totalSteps$Steps)
+```
+
+```
+## [1] 10765
 ```
 
 
 ## What is the average daily activity pattern?
-```{r echo = TRUE}
+
+```r
 #Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 meanIntervalSteps = aggregate(activityDataTrimed$steps ~ activityDataTrimed$interval, FUN = mean)
 
 plot(meanIntervalSteps,type = "l", xlab="5 minute interval", ylab="Steps per interval", main="Time series plot")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png) 
+
+```r
 #Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 meanIntervalSteps[which.max(meanIntervalSteps$`activityDataTrimed$steps`),]
+```
+
+```
+##     activityDataTrimed$interval activityDataTrimed$steps
+## 104                         835                 206.1698
 ```
 
 
 ## Imputing missing values
 
-```{r echo = TRUE}
+
+```r
 #Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
 nrow(activityData[is.na(activityData$steps),])
+```
+
+```
+## [1] 2304
+```
+
+```r
 #Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
 activityDataNoNA = activityData
 activityDataNoNA = transform(activityDataNoNA, date = as.Date(date, "%Y-%m-%d"))
@@ -75,6 +117,13 @@ for(i in 1:length(activityDataNoNA$steps)) {
 #print(head(activityDataNoNA))
 #Create a new dataset that is equal to the original dataset but with the missing data filled in.
 nrow(activityDataNoNA[is.na(activityDataNoNA$steps),]  )
+```
+
+```
+## [1] 0
+```
+
+```r
 #Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 totalStepsNoNa = aggregate(activityDataNoNA$steps ~ activityDataNoNA$date, FUN = sum)
 colnames(totalStepsNoNa) = c("Date","Steps")
@@ -83,15 +132,32 @@ hist(totalStepsNoNa$Steps, col="red",
       ylab = "Date (per day)",
       main = "Steps taken per day"
        )
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
+
+```r
 mean(totalStepsNoNa$Steps)
+```
+
+```
+## [1] 13865.44
+```
+
+```r
 median(totalStepsNoNa$Steps)
+```
+
+```
+## [1] 11458
 ```
 
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-```{r echo = TRUE}
+
+```r
 #Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.
 #activityDataTrimed$day_type = weekdays(activityDataTrimed$date)
 activityDataTrimed$daytype = "weekday"
@@ -118,8 +184,11 @@ library(ggplot2)
 qplot(interval, steps,data=meanWeekIntervalSteps,type = "l", xlab="5 minute interval", ylab="Steps per interval", main="Time series plot", geom=c("line")) + facet_wrap(~ daytype, ncol=1)
 ```
 
-###Clean the workspace
-```{r echo = TRUE, results="hide"}
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
+
+###clean the workspace
+
+```r
 rm(activityData, activityDataTrimed, totalSteps, meanIntervalSteps, activityDataNoNA, totalStepsNoNa, meanWeekIntervalSteps)
 if (file.exists(downloadFolder)) {
     #print("deleting tmp folder")
